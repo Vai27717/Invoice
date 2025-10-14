@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estimate</title>
+    <title>Invoice</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
     <script>
@@ -49,14 +49,14 @@
 </head>
 <body class="p-4 bg-gray-100 flex items-center justify-center min-h-screen">
     <div class="container-fluid bg-white p-6 rounded-xl shadow-lg w-full md:max-w-lg">
-        <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">Estimate</h1>
+        <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">Invoice</h1>
         
         <div id="loading-screen" class="fixed inset-0 bg-white bg-opacity-75 flex items-center justify-center hidden z-50">
             <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
         </div>
         
         <div id="creator-view">
-            <form id="estimate-form" class="space-y-4">
+            <form id="invoice-form" class="space-y-4">
                 <div class="bg-gray-50 p-4 rounded-lg">
                     <h2 class="text-xl font-semibold mb-3 text-gray-700">Customer Information</h2>
                     <div class="space-y-2">
@@ -78,8 +78,8 @@
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label for="estimate-number" class="block text-sm font-medium text-gray-700">Estimate Number</label>
-                                <input type="text" id="estimate-number" name="estimate-number" class="mt-1 block w-full p-2.5" placeholder="e.g., EST-001" readonly required>
+                                <label for="invoice-number" class="block text-sm font-medium text-gray-700">Invoice Number</label>
+                                <input type="text" id="invoice-number" name="invoice-number" class="mt-1 block w-full p-2.5" placeholder="e.g., INV-001" readonly required>
                             </div>
                             <div>
                                 <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
@@ -101,6 +101,7 @@
                     <h2 class="text-xl font-semibold mb-3 text-gray-700">Item List</h2>
                     <div id="items-container" class="space-y-4">
                         </div>
+                    
                     <button type="button" id="add-item-btn" class="mt-4 w-full bg-blue-500 text-white p-3 rounded-lg font-semibold hover:bg-blue-600 transition duration-200">
                         Add Item
                     </button>
@@ -111,21 +112,24 @@
                         <span>Subtotal</span>
                         <span id="subtotal">₹ 0.00</span>
                     </div>
+                    
                     <div class="flex justify-between font-semibold text-gray-700">
-                        <label for="discount-amount">Discount (%)</label>
-                        <input type="number" id="discount-amount" name="discount-amount" class="w-24 p-1 text-right" placeholder="0" min="0" value="0">
+                        <label for="advance-amount">Advance Amount (₹)</label>
+                        <input type="number" id="advance-amount" name="advance-amount" class="w-24 p-1 text-right" placeholder="0" min="0" value="0">
                     </div>
+          
                     <div class="flex justify-between font-bold text-lg text-gray-800 border-t pt-2">
                         <span>Grand Total</span>
                         <span id="grand-total">₹ 0.00</span>
                     </div>
+            
                     <div id="amount-in-words" class="text-sm italic text-gray-600"></div>
                 </div>
 
                 <div id="message-box-creator" class="hidden text-center text-sm p-3 rounded-lg font-medium"></div>
 
                 <div class="bg-gray-50 p-4 rounded-lg mt-4 space-y-3">
-                    <h2 class="text-xl font-semibold mb-3 text-gray-700">Share Estimate</h2>
+                    <h2 class="text-xl font-semibold mb-3 text-gray-700">Share Invoice</h2>
                     
                     <div>
                         <label for="creator-whatsapp" class="block text-sm font-medium text-gray-700">Your WhatsApp Number (for notifications)</label>
@@ -141,15 +145,15 @@
                         </button>
                     </div>
                 </div>
-                <button type="button" id="new-estimate-btn" class="mt-4 w-full bg-indigo-500 text-white p-3 rounded-lg font-semibold hover:bg-indigo-600 transition duration-200">
-                    New Estimate
+                <button type="button" id="new-invoice-btn" class="mt-4 w-full bg-indigo-500 text-white p-3 rounded-lg font-semibold hover:bg-indigo-600 transition duration-200">
+                    New Invoice
                 </button>
 
                 <div class="bg-gray-50 p-4 rounded-lg mt-4">
-                    <h2 class="text-xl font-semibold mb-3 text-gray-700">Saved Estimates</h2>
+                    <h2 class="text-xl font-semibold mb-3 text-gray-700">Saved Invoices</h2>
                     <div class="flex flex-wrap items-center space-x-2 space-y-2 md:space-y-0">
-                        <select id="saved-estimates-dropdown" class="flex-grow p-2.5 rounded-lg border-gray-300">
-                            <option value="">Select an Estimate</option>
+                        <select id="saved-invoices-dropdown" class="flex-grow p-2.5 rounded-lg border-gray-300">
+                            <option value="">Select an Invoice</option>
                         </select>
                         <button type="button" id="load-selected-btn" class="w-full md:w-auto p-2.5 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition duration-200">Load</button>
                         <button type="button" id="delete-selected-btn" class="w-full md:w-auto p-2.5 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600 transition duration-200">Delete</button>
@@ -173,8 +177,8 @@
                                 <span id="customer-name-display" class="block mt-1 p-2.5 text-lg"></span>
                             </div>
                             <div>
-                                <span class="block text-sm font-medium text-gray-700">Estimate Number:</span>
-                                <span id="estimate-number-display" class="block mt-1 p-2.5 text-lg"></span>
+                                <span class="block text-sm font-medium text-gray-700">Invoice Number:</span>
+                                <span id="invoice-number-display" class="block mt-1 p-2.5 text-lg"></span>
                             </div>
                             <div>
                                 <span class="block text-sm font-medium text-gray-700">Date:</span>
@@ -186,7 +190,7 @@
                     <div class="bg-gray-50 p-4 rounded-lg">
                         <h2 class="text-xl font-semibold mb-3 text-gray-700">Item List</h2>
                         <div id="items-container-display" class="space-y-4">
-                            </div>
+                        </div>
                     </div>
                 
                     <div class="bg-gray-50 p-4 rounded-lg space-y-2">
@@ -194,38 +198,24 @@
                             <span>Subtotal</span>
                             <span id="subtotal-display"></span>
                         </div>
+                        
                         <div class="flex justify-between font-semibold text-gray-700">
-                            <span>Discount</span>
-                            <span id="discount-display"></span>
+                            <span>Advance</span>
+                            <span id="advance-display"></span>
                         </div>
+            
                         <div class="flex justify-between font-bold text-lg text-gray-800 border-t pt-2">
                             <span>Grand Total</span>
                             <span id="grand-total-display"></span>
                         </div>
                         <div id="amount-in-words-display" class="text-sm italic text-gray-600"></div>
                     </div>
-                
-                    <div class="bg-gray-50 p-4 rounded-lg mt-4">
-                        <h2 class="text-xl font-semibold mb-3 text-gray-700">Terms & Conditions</h2>
-                        <ol class="list-decimal list-inside text-sm text-gray-700 space-y-1">
-                            <li>30% amount of advance estimate amount has to be paid first</li>
-                            <li>60% is to be paid as per the step of the work after the commencement of the work</li>
-                            <li>10% within 7 days of work completion.</li>
-                            <li>Additional work will be billed separately.</li>
-                            <li>Check when the work is completed - no disputes will be considered later.</li>
-                            <li>If payment is made by check, an additional charge of ₹350 will be charged if the check bounces.</li>
-                            <li>Any changes require separate payment.</li>
-                            <li>This estimate is valid for 7 days.</li>
-                        </ol>
+                    
                     </div>
-                </div>
 
                 <div id="message-box-customer" class="hidden text-center text-sm p-3 rounded-lg font-medium"></div>
 
-                <div class="mt-4 grid grid-cols-2 gap-4">
-                    <button type="button" id="accept-btn" class="w-full bg-purple-500 text-white p-3 rounded-lg font-bold hover:bg-purple-600 transition duration-200">
-                        Accept Estimate
-                    </button>
+                <div class="mt-4 grid grid-cols-1 gap-4">
                     <button type="button" id="download-pdf-btn" class="w-full bg-red-500 text-white p-3 rounded-lg font-bold hover:bg-red-600 transition duration-200">
                         Download PDF
                     </button>
@@ -246,8 +236,8 @@
             const messageBoxCustomer = document.getElementById('message-box-customer');
             const loadingScreen = document.getElementById('loading-screen');
 
-            // --- Google Scripts URL - Please replace with your new deployed URL ---
-            const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbzvNcf7sgWgIO5gsWw9MRYhXZIFLD1ct1Ha1ZPbhpH43UhS-XHCdt8pDecnhjJFV0uH/exec';
+            // --- Google Scripts URL - REPLACED WITH NEW URL ---
+            const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbw9xa1AaPreaZtpG3JbO0mUKoCjQ2IWOiLOhc6rPNKMkL-tTC6m9CUDikhNZRYTMmWJ/exec';
 
             function showLoading() {
                 loadingScreen.classList.remove('hidden');
@@ -257,6 +247,7 @@
                 loadingScreen.classList.add('hidden');
             }
             
+            // Renamed function to reflect Invoice
             const postDataToGoogleSheet = async (data) => {
                 showLoading();
                 const payload = new FormData();
@@ -277,16 +268,18 @@
                 } catch (error) {
                     hideLoading();
                     console.error('Error sending data to Google Sheets:', error);
-                    showMessage(messageBoxCreator, 'An error occurred while sending the estimate.', 'red');
+                    showMessage(messageBoxCreator, 'An error occurred while sending the invoice.', 'red');
                     return { status: 'error', error: error.message };
                 }
             };
 
-            const getEstimateFromSheet = async (action, estimateNumber = null) => {
+            // Renamed function to reflect Invoice
+            const getInvoiceFromSheet = async (action, invoiceNumber = null) => {
                 showLoading();
                 let url = `${googleScriptUrl}?action=${action}`;
-                if (estimateNumber) {
-                    url += `&estimateNumber=${encodeURIComponent(estimateNumber)}`;
+                // Changed parameter name to invoiceNumber for clarity
+                if (invoiceNumber) {
+                    url += `&invoiceNumber=${encodeURIComponent(invoiceNumber)}`;
                 }
                 try {
                     const response = await fetch(url);
@@ -305,11 +298,12 @@
                 }
             };
 
-            const deleteEstimateFromSheet = async (estimateNumber) => {
+            // Renamed function to reflect Invoice
+            const deleteInvoiceFromSheet = async (invoiceNumber) => {
                 showLoading();
                 const payload = new FormData();
                 payload.append('action', 'delete');
-                payload.append('estimateNumber', estimateNumber);
+                payload.append('invoiceNumber', invoiceNumber); // Changed parameter name
                 
                 try {
                     const response = await fetch(googleScriptUrl, {
@@ -325,11 +319,10 @@
                 } catch (error) {
                     hideLoading();
                     console.error('Error deleting data from Google Sheets:', error);
-                    showMessage(messageBoxCreator, 'An error occurred while deleting the estimate.', 'red');
+                    showMessage(messageBoxCreator, 'An error occurred while deleting the invoice.', 'red');
                     return { status: 'error', error: error.message };
                 }
             };
-
             // --- End Google Sheets Integration Setup ---
 
             // Function to display messages
@@ -347,13 +340,18 @@
             };
 
             // Function to format the date to DD-MM-YYYY
+            // Function to format the date to DD-MM-YYYY
             const formatDate = (dateString) => {
                 if (!dateString) return '';
+                // Date object madhun YYYY-MM-DD format madhe ghenar, tarihi DD-MM-YYYY madhe display honyasathi:
                 const date = new Date(dateString);
+                // Jar date invalid asel, tar return.
+                if (isNaN(date)) return dateString; 
+
                 const day = String(date.getDate()).padStart(2, '0');
                 const month = String(date.getMonth() + 1).padStart(2, '0');
                 const year = date.getFullYear();
-                return `${day}-${month}-${year}`;
+                return `${day}-${month}-${year}`; // Display in DD-MM-YYYY
             };
 
             const convertNumberToEnglishWords = (num) => {
@@ -386,14 +384,13 @@
                 return 'Rupees ' + words.trim() + ' Only';
             };
             
-           // --- PDF Generation Function ---
-            // --- PDF Generation Function (Final Invoice Version) ---
+           // --- PDF Generation Function (Updated for Invoice) ---
             const generatePDF = (data) => {
                 const items = JSON.parse(data.items);
                 let itemsHtml = items.length > 0 ? items.map((item, index) => `
                     <tr>
                         <td style="border: 1px solid #ddd; padding: 8px; text-align: left;">${index + 1}</td>
-                        <td style="border: 1px solid #ddd; padding: 8px; text-align: left;">${item.name}${item.description ? '<br>' + item.description : ''}</td> 
+                        <td style="border: 1px solid #ddd; padding: 8px; text-align: left;">${item.name}${item.description ? '<br>' + item.description : ''}</td>
                         <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${item.quantity}</td>
                         <td style="border: 1px solid #ddd; padding: 8px; text-align: left;">${item.unit}</td>
                         <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">₹ ${parseFloat(item.rate).toFixed(2)}</td>
@@ -401,7 +398,7 @@
                     </tr>
                 `).join('') : `<tr><td colspan="6" style="border: 1px solid #ddd; padding: 8px; text-align: center;">No items in this invoice.</td></tr>`;
                 
-                // ✅ Discount chya jagi Advance (Less Advance)
+                // Changed Discount to Advance
                 const advanceHtml = parseFloat(data.advance) > 0 ? `
                     <p style="margin: 5px 0; display: flex; justify-content: space-between; font-weight: 600; color: #cc0000;"><span>Less Advance:</span><span>₹ ${parseFloat(data.advance).toFixed(2)}</span></p>
                 ` : '';
@@ -425,7 +422,7 @@
                                 <p style="margin: 5px 0;">Work Title: ${data.workTitle}</p>
                             </div>
                             <div style="width: 40%; margin-left: auto; text-align: right; border: 1px solid #eee; padding: 10px;">
-                                <p style="margin: 0;"><strong>Invoice No.:</strong> ${data.invoiceNumber}</p> 
+                                <p style="margin: 0;"><strong>Invoice No.:</strong> ${data.invoiceNumber}</p>
                                 <p style="margin: 5px 0;"><strong>Date:</strong> ${formatDate(data.date)}</p>
                                 </div>
                         </div>
@@ -449,13 +446,17 @@
                         <div style="margin-top: 20px; display: flex; justify-content: flex-end;">
                             <div style="width: 40%;">
                                 <p style="margin: 0; display: flex; justify-content: space-between;"><span>Subtotal:</span><span>₹ ${parseFloat(data.subtotal).toFixed(2)}</span></p>
-                                ${advanceHtml} <hr style="border: none; border-top: 1px solid #333; margin: 10px 0;">
+                                ${advanceHtml}
+                                <hr style="border: none; border-top: 1px solid #333; margin: 10px 0;">
                                 <p style="margin: 0; font-size: 18px; font-weight: bold; display: flex; justify-content: space-between;"><span>Grand Total:</span><span>₹ ${parseFloat(data.grandTotal).toFixed(2)}</span></p>
                             </div>
                         </div>
                         <p style="margin-top: 10px; font-style: italic; text-align: right;">${convertNumberToEnglishWords(parseFloat(data.grandTotal))}</p>
-                        
-                        <div style="margin-top: 40px; display: flex; justify-content: flex-end; align-items: flex-end;">
+                        <div style="margin-top: 40px; display: flex; justify-content: space-between; align-items: flex-end;">
+                            <div>
+                                <p style="margin: 0;">Customer Signature:</p>
+                                <div style="border-top: 1px solid #000; width: 150px; margin-top: 20px;"></div>
+                            </div>
                             <div style="text-align: right;">
                                 <p style="margin: 0; font-weight: bold;">For Vaibhav Enterprises</p>
                                 <div style="height: 50px;"></div>
@@ -463,26 +464,17 @@
                                 <p style="margin: 5px 0 0;">(Authorized Signature)</p>
                             </div>
                         </div>
-
                         <p style="text-align: center; margin-top: 20px; font-size: 12px; font-style: italic;">Thank you for connecting with Vaibhav Enterprises</p>
                     </div>
                 `;
                 const options = {
                     margin: 10,
-                    // ✅ Filename change
-                    filename: `Invoice_${data.invoiceNumber}.pdf`, 
+                    filename: `Invoice_${data.invoiceNumber}.pdf`, // Changed filename
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 2 },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
-                
-                // ✅ PDF Download Fix (using try-catch for robustness)
-                try {
-                    html2pdf().from(pdfContent).set(options).save();
-                } catch (e) {
-                    console.error("PDF Generation Error:", e);
-                    alert("PDF generation failed. Check browser console for details.");
-                }
+                html2pdf().from(pdfContent).set(options).save();
             };
 
 
@@ -491,42 +483,44 @@
                 creatorView.classList.add('hidden');
                 customerView.classList.remove('hidden');
 
-                const acceptBtn = document.getElementById('accept-btn');
                 const downloadPdfBtn = document.getElementById('download-pdf-btn');
-                const estimateId = urlParams.get('id');
-                let estimateData = null;
-                if (estimateId) {
-                    getEstimateFromSheet('getsingle', estimateId)
+                const invoiceId = urlParams.get('id'); // Changed estimateId to invoiceId
+                let invoiceData = null;
+
+                if (invoiceId) {
+                    getInvoiceFromSheet('getsingle', invoiceId) // Changed function name and parameter
                         .then(data => {
                             // Check if data is received and contains the required fields
-                            if (data && data['Estimate Number']) {
-                                estimateData = {
+                            if (data && data['Invoice Number']) { // Changed Estimate Number to Invoice Number
+                                invoiceData = {
                                     customerName: data['Customer Name'] || '',
                                     customerWhatsapp: data['Customer Whatsapp'] || '',
                                     workTitle: data['Work Title'] || '',
-                                    estimateNumber: data['Estimate Number'] || '',
+                                    invoiceNumber: data['Invoice Number'] || '', // Changed key
                                     date: data['Date'] || '',
-                                    items: data['Items'] || '[]', // Provide a default empty array for items
+                                    items: data['Items'] || '[]',
                                     subtotal: data['Subtotal'] || 0,
-                                    discount: data['Discount'] || 0,
+                                    advance: data['Advance'] || 0, // Changed key from discount to advance
                                     grandTotal: data['Grand Total'] || 0,
                                     creatorWhatsapp: data['Your WhatsApp Number'] || ''
                                 };
+                                
                                 // Update the display elements with the fetched data
-                                document.getElementById('work-title-display').textContent = estimateData.workTitle;
-                                document.getElementById('customer-name-display').textContent = estimateData.customerName;
-                                document.getElementById('estimate-number-display').textContent = estimateData.estimateNumber;
-                                document.getElementById('date-display').textContent = formatDate(estimateData.date);
-                                document.getElementById('subtotal-display').textContent = `₹ ${parseFloat(estimateData.subtotal).toFixed(2)}`;
-                                document.getElementById('discount-display').textContent = `${parseFloat(estimateData.discount)}%`;
-                                document.getElementById('grand-total-display').textContent = `₹ ${parseFloat(estimateData.grandTotal).toFixed(2)}`;
-                                const grandTotalAmount = parseFloat(estimateData.grandTotal) || 0;
+                                document.getElementById('work-title-display').textContent = invoiceData.workTitle;
+                                document.getElementById('customer-name-display').textContent = invoiceData.customerName;
+                                document.getElementById('invoice-number-display').textContent = invoiceData.invoiceNumber; // Changed ID
+                                document.getElementById('date-display').textContent = formatDate(invoiceData.date);
+                                document.getElementById('subtotal-display').textContent = `₹ ${parseFloat(invoiceData.subtotal).toFixed(2)}`;
+                                document.getElementById('advance-display').textContent = `₹ ${parseFloat(invoiceData.advance).toFixed(2)}`; // Changed ID and display
+                                document.getElementById('grand-total-display').textContent = `₹ ${parseFloat(invoiceData.grandTotal).toFixed(2)}`;
+                                
+                                const grandTotalAmount = parseFloat(invoiceData.grandTotal) || 0;
                                 document.getElementById('amount-in-words-display').textContent = convertNumberToEnglishWords(grandTotalAmount);
 
                                 const itemsContainerDisplay = document.getElementById('items-container-display');
                                 itemsContainerDisplay.innerHTML = '';
                                 try {
-                                    const items = JSON.parse(estimateData.items);
+                                    const items = JSON.parse(invoiceData.items);
                                     if (items && items.length > 0) {
                                         items.forEach(item => {
                                             const itemRow = document.createElement('div');
@@ -546,106 +540,81 @@
                                     itemsContainerDisplay.innerHTML = '<p class="text-red-500">Error loading item details.</p>';
                                 }
                                 
-                                acceptBtn.addEventListener('click', async () => {
-    if (confirm('Are you sure you want to accept this estimate?')) {
-        try {
-            const payload = new FormData();
-            payload.append('action', 'accept');
-            payload.append('estimateNumber', estimateData.estimateNumber);
-
-            const response = await fetch(googleScriptUrl, {
-                method: 'POST',
-                body: payload,
-            });
-
-            const result = await response.json();
-
-            if (result.status === 'success') {
-                let message = `Hello, Estimate number ${estimateData.estimateNumber} has been accepted by the customer.`;
-                if (estimateData.creatorWhatsapp) {
-                    const whatsappUrl = `https://wa.me/${estimateData.creatorWhatsapp}?text=${encodeURIComponent(message)}`;
-                    window.open(whatsappUrl, '_blank');
-                }
-                showMessage(messageBoxCustomer, 'Estimate accepted successfully!', 'green');
-                acceptBtn.disabled = true;
-                acceptBtn.textContent = 'Accepted';
-                acceptBtn.classList.remove('bg-purple-500', 'hover:bg-purple-600');
-                acceptBtn.classList.add('bg-gray-400');
-            } else {
-                showMessage(messageBoxCustomer, 'Failed to accept estimate. Please try again.', 'red');
-            }
-        } catch (error) {
-            console.error('Error accepting estimate:', error);
-            showMessage(messageBoxCustomer, 'Error while accepting the estimate.', 'red');
-        }
-    }
-});
-
+                                // Removed Accept button logic
+                                
                                 downloadPdfBtn.addEventListener('click', () => {
-                                    if (estimateData) {
-                                        generatePDF(estimateData);
+                                    if (invoiceData) {
+                                        generatePDF(invoiceData);
                                         showMessage(messageBoxCustomer, 'PDF is being downloaded.', 'green');
                                     }
                                 });
+
                             } else {
-                                showMessage(messageBoxCustomer, 'Estimate data not found.', 'red');
+                                showMessage(messageBoxCustomer, 'Invoice data not found.', 'red');
                             }
                         })
                         .catch(error => {
-                            showMessage(messageBoxCustomer, 'Something went wrong while loading the estimate.', 'red');
+                            showMessage(messageBoxCustomer, 'Something went wrong while loading the invoice.', 'red');
                         });
                 } else {
-                    showMessage(messageBoxCustomer, 'Estimate ID not available.', 'red');
+                    showMessage(messageBoxCustomer, 'Invoice ID not available.', 'red');
                 }
 
             } else {
                 // Creator's view
                 creatorView.classList.remove('hidden');
                 customerView.classList.add('hidden');
+
+                const form = document.getElementById('invoice-form');
                 const itemsContainer = document.getElementById('items-container');
                 const addItemBtn = document.getElementById('add-item-btn');
-                const newEstimateBtn = document.getElementById('new-estimate-btn');
+                const newInvoiceBtn = document.getElementById('new-invoice-btn'); // Changed ID
                 const subtotalEl = document.getElementById('subtotal');
-                const discountAmountInput = document.getElementById('discount-amount');
+                const advanceAmountInput = document.getElementById('advance-amount'); // Changed ID
                 const grandTotalEl = document.getElementById('grand-total');
                 const amountInWordsEl = document.getElementById('amount-in-words');
                 const creatorWhatsappInput = document.getElementById('creator-whatsapp');
                 const shareWhatsappBtn = document.getElementById('share-whatsapp-btn');
-                const estimateNumberInput = document.getElementById('estimate-number');
+                const invoiceNumberInput = document.getElementById('invoice-number'); // Changed ID
                 const dateInput = document.getElementById('date');
                 const openContactsBtn = document.getElementById('open-contacts-btn');
                 const customerNameInput = document.getElementById('customer-name');
                 const customerWhatsappInput = document.getElementById('customer-whatsapp');
                 const workTitleInput = document.getElementById('work-title');
                 const generatePdfBtn = document.getElementById('generate-pdf-btn');
-                const savedEstimatesDropdown = document.getElementById('saved-estimates-dropdown');
+                const savedInvoicesDropdown = document.getElementById('saved-invoices-dropdown'); // Changed ID
                 const loadSelectedBtn = document.getElementById('load-selected-btn');
                 const deleteSelectedBtn = document.getElementById('delete-selected-btn');
-                let loadedEstimates = [];
+                let loadedInvoices = []; // Changed variable name
 
-                const loadEstimatesToDropdown = async () => {
-                    const estimates = await getEstimateFromSheet('getall');
-                    loadedEstimates = Array.isArray(estimates) ? estimates : [];
-                    savedEstimatesDropdown.innerHTML = '<option value="">Select an Estimate</option>';
-                    if (loadedEstimates.length > 0) {
-                        loadedEstimates.forEach(estimate => {
+                // Renamed function to reflect Invoice
+                const loadInvoicesToDropdown = async () => {
+                    const invoices = await getInvoiceFromSheet('getall'); // Changed function name
+                    loadedInvoices = Array.isArray(invoices) ? invoices : [];
+                    
+                    savedInvoicesDropdown.innerHTML = '<option value="">Select an Invoice</option>'; // Changed text
+                    if (loadedInvoices.length > 0) {
+                        loadedInvoices.forEach(invoice => {
                             const option = document.createElement('option');
-                            option.value = estimate['Estimate Number'];
-                            option.textContent = `${estimate['Estimate Number']} - ${estimate['Customer Name']} (${formatDate(estimate['Date'])})`;
-                            savedEstimatesDropdown.appendChild(option);
+                            option.value = invoice['Invoice Number']; // Changed key
+                            option.textContent = `${invoice['Invoice Number']} - ${invoice['Customer Name']} (${formatDate(invoice['Date'])})`;
+                            savedInvoicesDropdown.appendChild(option);
                         });
                     }
                 };
 
-                const generateNewEstimateNumber = async () => {
+                // Renamed function and changed prefix
+                const generateNewInvoiceNumber = async () => {
                     const today = new Date();
                     const formattedDate = today.toISOString().split('T')[0];
                     dateInput.value = formattedDate;
-                    const estimates = await getEstimateFromSheet('getall');
-                    const newCount = Array.isArray(estimates) ? estimates.length + 1 : 1;
-                    estimateNumberInput.value = `EST-${newCount.toString().padStart(4, '0')}`;
-                };
 
+                    const nextNo = await getInvoiceFromSheet('getnextno'); // Changed function name
+                    const newCount = parseInt(nextNo, 10) || 1;
+                    
+                    invoiceNumberInput.value = `INV-${newCount.toString().padStart(4, '0')}`; // Changed prefix
+                };
+                
                 const addItemRow = (item = {}) => {
                     const itemRow = document.createElement('div');
                     itemRow.className = 'item-row bg-white p-3 rounded-lg shadow-sm';
@@ -669,272 +638,218 @@
                         </div>
                         <div class="grid grid-cols-4 gap-2">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700">Quantity</label>
-                                <input type="number" class="item-quantity mt-1 block w-full p-2.5" placeholder="e.g., 1" min="1" value="${item.quantity || 1}" required>
+                                <label class="block text-sm font-medium text-gray-700">Qty</label>
+                                <input type="number" class="item-quantity mt-1 block w-full p-2.5 text-right" placeholder="0" min="0" value="${item.quantity || 0}" required>
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Unit</label>
-                                <input type="text" class="item-unit mt-1 block w-full p-2.5" placeholder="e.g., Pcs" value="${item.unit || 'nos'}" required>
+                                <input type="text" class="item-unit mt-1 block w-full p-2.5" placeholder="e.g., sqft" value="${item.unit || ''}">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Rate</label>
-                                <input type="number" class="item-rate mt-1 block w-full p-2.5" placeholder="e.g., 100" min="0" value="${item.rate || 0}" required>
+                                <input type="number" class="item-rate mt-1 block w-full p-2.5 text-right" placeholder="0.00" min="0" value="${item.rate || 0}" required>
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Total</label>
-                                <input type="text" class="item-total mt-1 block w-full p-2.5 bg-gray-100" readonly value="${item.total || '0.00'}">
+                                <input type="text" class="item-total mt-1 block w-full p-2.5 text-right bg-gray-200" value="${item.total ? parseFloat(item.total).toFixed(2) : '0.00'}" readonly>
                             </div>
                         </div>
                     `;
                     itemsContainer.appendChild(itemRow);
                     itemRow.querySelector('.delete-item-btn').addEventListener('click', () => {
                         itemRow.remove();
-                        calculateTotals();
+                        updateGrandTotal();
                     });
-                    itemRow.querySelectorAll('input, textarea').forEach(input => {
-                        input.addEventListener('input', calculateTotals);
-                    });
+                    const inputs = itemRow.querySelectorAll('.item-quantity, .item-rate');
+                    inputs.forEach(input => input.addEventListener('input', () => calculateItemTotal(itemRow)));
+                    calculateItemTotal(itemRow);
                 };
                 
-                const calculateTotals = () => {
-                    let subtotal = 0;
-                    const itemRows = document.querySelectorAll('.item-row');
-                    itemRows.forEach(row => {
-                        const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
-                        const rate = parseFloat(row.querySelector('.item-rate').value) || 0;
-                        const total = quantity * rate;
-                        subtotal += total;
-                        row.querySelector('.item-total').value = total.toFixed(2);
-                    });
+                const calculateItemTotal = (itemRow) => {
+                    const quantity = parseFloat(itemRow.querySelector('.item-quantity').value) || 0;
+                    const rate = parseFloat(itemRow.querySelector('.item-rate').value) || 0;
+                    const total = quantity * rate;
+                    itemRow.querySelector('.item-total').value = total.toFixed(2);
+                    updateGrandTotal();
+                };
 
-                    const discountPercentage = parseFloat(discountAmountInput.value) || 0;
-                    const discountAmount = (subtotal * discountPercentage) / 100;
-                    const grandTotal = subtotal - discountAmount;
+                // UPDATED: Calculation changed from Discount (%) to Advance (fixed amount)
+                const updateGrandTotal = () => {
+                    const itemRows = itemsContainer.querySelectorAll('.item-row');
+                    let subtotal = 0;
+                    itemRows.forEach(row => {
+                        subtotal += parseFloat(row.querySelector('.item-total').value) || 0;
+                    });
+                    
+                    const advanceAmount = parseFloat(advanceAmountInput.value) || 0;
+
+                    // New calculation: Grand Total = Subtotal - Advance
+                    const grandTotal = subtotal - advanceAmount;
 
                     subtotalEl.textContent = `₹ ${subtotal.toFixed(2)}`;
                     grandTotalEl.textContent = `₹ ${grandTotal.toFixed(2)}`;
-                    amountInWordsEl.textContent = convertNumberToEnglishWords(grandTotal);
+
+                    const grandTotalAmount = parseFloat(grandTotal) || 0;
+                    amountInWordsEl.textContent = convertNumberToEnglishWords(grandTotalAmount);
                 };
+                
+                const getFormData = () => {
+                    const itemRows = itemsContainer.querySelectorAll('.item-row');
+                    const items = Array.from(itemRows).map(row => ({
+                        name: row.querySelector('.item-name').value,
+                        description: row.querySelector('.item-description').value,
+                        quantity: parseFloat(row.querySelector('.item-quantity').value) || 0,
+                        unit: row.querySelector('.item-unit').value,
+                        rate: parseFloat(row.querySelector('.item-rate').value) || 0,
+                        total: parseFloat(row.querySelector('.item-total').value) || 0
+                    }));
 
-                const populateForm = (data) => {
-                    customerNameInput.value = data['Customer Name'] || '';
-                    customerWhatsappInput.value = data['Customer Whatsapp'] || '';
-                    workTitleInput.value = data['Work Title'] || '';
-                    estimateNumberInput.value = data['Estimate Number'] || '';
-                    // Convert and set the date value correctly
-                    if (data['Date']) {
-                        const date = new Date(data['Date']);
-                        const formattedDate = date.toISOString().split('T')[0];
-                        dateInput.value = formattedDate;
-                    } else {
-                        dateInput.value = '';
-                    }
-                    
-                    creatorWhatsappInput.value = data['Your WhatsApp Number'] || '';
-                    discountAmountInput.value = parseFloat(data['Discount']) || 0;
+                    const subtotal = parseFloat(subtotalEl.textContent.replace('₹ ', '').replace(/,/g, '')) || 0;
+                    const grandTotal = parseFloat(grandTotalEl.textContent.replace('₹ ', '').replace(/,/g, '')) || 0;
 
-                    itemsContainer.innerHTML = '';
-                    if (data.Items) {
-                        try {
-                            const items = JSON.parse(data.Items);
-                            items.forEach(item => addItemRow(item));
-                        } catch (e) {
-                            console.error("Error parsing items JSON:", e);
-                            showMessage(messageBoxCreator, 'Error loading item details from saved estimate.', 'red');
-                        }
-                    } else {
-                        addItemRow();
-                    }
-                    calculateTotals();
+                    return {
+                        'Timestamp': new Date().toISOString(),
+                        'Customer Name': customerNameInput.value,
+                        'Customer Whatsapp': customerWhatsappInput.value,
+                        'Invoice Number': invoiceNumberInput.value, // Changed key
+                        'Date': dateInput.value,
+                        'Work Title': workTitleInput.value,
+                        'Items': JSON.stringify(items),
+                        'Subtotal': subtotal.toFixed(2),
+                        'Advance': parseFloat(advanceAmountInput.value).toFixed(2), // Changed key
+                        'Grand Total': grandTotal.toFixed(2),
+                        'Your WhatsApp Number': creatorWhatsappInput.value // For notifications
+                    };
                 };
 
                 const resetForm = () => {
-                    document.getElementById('estimate-form').reset();
+                    form.reset();
                     itemsContainer.innerHTML = '';
-                    addItemRow();
-                    calculateTotals();
-                    generateNewEstimateNumber();
-                    dateInput.valueAsDate = new Date();
-                    loadEstimatesToDropdown();
+                    addItemRow(); // Start with one empty item row
+                    generateNewInvoiceNumber(); // Changed function name
+                    updateGrandTotal(); // Recalculate totals
+                    showMessage(messageBoxCreator, '', 'hidden');
+                    invoiceNumberInput.classList.remove('bg-gray-200'); // Ensure it's not disabled/styled on new
                 };
 
-                addItemBtn.addEventListener('click', () => addItemRow());
-                discountAmountInput.addEventListener('input', calculateTotals);
-                itemsContainer.addEventListener('input', (e) => {
-                    if (e.target.closest('.item-row')) {
-                        calculateTotals();
+                const loadInvoice = (invoice) => {
+                    customerNameInput.value = invoice['Customer Name'] || '';
+                    customerWhatsappInput.value = invoice['Customer Whatsapp'] || '';
+                    invoiceNumberInput.value = invoice['Invoice Number'] || '';
+                    
+                    // ✅ FIX: Date la YYYY-MM-DD format madhe set kela.
+                    // Jar date '2025-09-26T...' ahe, tar fakt '2025-09-26' ghenar.
+                    const sheetDate = invoice['Date'];
+                    if (sheetDate) {
+                        // Date object vāparūn ISO format madhe convert karūn date ghenar.
+                        const dateOnly = new Date(sheetDate).toISOString().split('T')[0];
+                        dateInput.value = dateOnly;
+                    } else {
+                        dateInput.value = '';
                     }
-                });
 
-                // **New code to handle contact picker**
-                openContactsBtn.addEventListener('click', async () => {
+                    workTitleInput.value = invoice['Work Title'] || '';
+                    advanceAmountInput.value = parseFloat(invoice['Advance'] || 0);
+                    creatorWhatsappInput.value = invoice['Your WhatsApp Number'] || '919049764945';
+
+                    itemsContainer.innerHTML = '';
                     try {
-                        const available = ('contacts' in navigator && 'ContactsManager' in window);
-                        if (available) {
-                            const properties = ['name', 'tel'];
-                            const options = { multiple: false };
-                            const contacts = await navigator.contacts.select(properties, options);
-
-                            if (contacts.length > 0) {
-                                const contact = contacts[0];
-                                customerNameInput.value = contact.name[0] || '';
-                                customerWhatsappInput.value = contact.tel[0] || '';
-                            }
-                        } else {
-                            showMessage(messageBoxCreator, 'Contact Picker API not supported in this browser.', 'red');
-                        }
-                    } catch (error) {
-                        console.error('Error selecting contacts:', error);
-                        showMessage(messageBoxCreator, 'Failed to access contacts. Please grant permissions.', 'red');
+                        const items = JSON.parse(invoice['Items']);
+                        items.forEach(item => addItemRow(item));
+                    } catch (e) {
+                        console.error("Error parsing items JSON:", e);
+                        showMessage(messageBoxCreator, 'Error loading item details from saved invoice.', 'red');
                     }
-                });
-                // **End of new code**
+                    updateGrandTotal();
+                    invoiceNumberInput.classList.add('bg-gray-200');
+                };
+                // --- Event Listeners ---
+                addItemBtn.addEventListener('click', () => addItemRow());
+                newInvoiceBtn.addEventListener('click', () => resetForm()); // Changed ID
 
+                // Recalculate on advance input change
+                advanceAmountInput.addEventListener('input', updateGrandTotal); // Changed ID
+
+                // Save/Share logic - same action for WhatsApp share, saves first
                 shareWhatsappBtn.addEventListener('click', async () => {
-                    const customerName = customerNameInput.value;
-                    const customerWhatsapp = customerWhatsappInput.value;
-                    const workTitle = workTitleInput.value;
-                    const estimateNumber = estimateNumberInput.value;
-                    const date = dateInput.value;
-                    const creatorWhatsapp = creatorWhatsappInput.value;
-                    const subtotal = parseFloat(subtotalEl.textContent.replace('₹ ', ''));
-                    const discount = parseFloat(discountAmountInput.value) || 0;
-                    const grandTotal = parseFloat(grandTotalEl.textContent.replace('₹ ', ''));
-
-                    const items = [];
-                    document.querySelectorAll('.item-row').forEach(row => {
-                        items.push({
-                            name: row.querySelector('.item-name').value,
-                            description: row.querySelector('.item-description').value,
-                            quantity: parseFloat(row.querySelector('.item-quantity').value),
-                            unit: row.querySelector('.item-unit').value,
-                            rate: parseFloat(row.querySelector('.item-rate').value),
-                            total: parseFloat(row.querySelector('.item-total').value)
-                        });
-                    });
-
-                    if (!customerName || !customerWhatsapp || !workTitle || !estimateNumber || !date) {
-                        showMessage(messageBoxCreator, 'Please fill out all required fields.', 'red');
+                    if (!form.checkValidity()) {
+                        form.reportValidity();
                         return;
                     }
+                    const dataToSave = getFormData();
+                    const result = await postDataToGoogleSheet({ action: 'save', data: dataToSave });
 
-                    const formData = {
-                        'Customer Name': customerName,
-                        'Customer Whatsapp': customerWhatsapp,
-                        'Work Title': workTitle,
-                        'Estimate Number': estimateNumber,
-                        'Date': date,
-                        'Your WhatsApp Number': creatorWhatsapp,
-                        'Items': JSON.stringify(items),
-                        'Subtotal': subtotal,
-                        'Discount': discount,
-                        'Grand Total': grandTotal,
-                        'Status': 'Pending'
-                    };
-                    const result = await postDataToGoogleSheet({ action: 'save', data: formData });
                     if (result.status === 'success') {
-                        const whatsappMessage = `Dear,\nSir/Madam\nClient Name: ${customerName}\nContact No: ${customerWhatsapp}\n\nYour estimate is ready. Click the link below to view it.\n\nOpen Estimate Details: https://vai27717.github.io/mobile-estimate-app/?view=customer&id=${estimateNumber}\n\nThank you for connecting with Vaibhav Enterprises.\nVisit our site to see our renovation services:\nhttp://www.vaibhaventerprises.info`;
+                        showMessage(messageBoxCreator, 'Invoice saved successfully. Preparing WhatsApp share link...', 'green');
+                        const shareLink = `${window.location.origin}${window.location.pathname}?id=${encodeURIComponent(dataToSave['Invoice Number'])}&view=customer`;
+                        
+                        let message = `*📄 Invoice from Vaibhav Enterprises*\n\n`;
+                        message += `*Invoice No*: ${dataToSave['Invoice Number']}\n`;
+                        message += `*Customer*: ${dataToSave['Customer Name']}\n`;
+                        message += `*Work Title*: ${dataToSave['Work Title']}\n`;
+                        message += `*Grand Total*: ₹${dataToSave['Grand Total']}\n\n`;
+                        message += `Click the link below to view the invoice details:\n${shareLink}`;
 
-                        const whatsappUrl = `https://wa.me/${customerWhatsapp}?text=${encodeURIComponent(whatsappMessage)}`;
-                        window.open(whatsappUrl, '_blank');
-                        showMessage(messageBoxCreator, 'Estimate saved and sent successfully! Please check WhatsApp.', 'green');
-                        resetForm();
+                        window.open(`https://wa.me/${dataToSave['Customer Whatsapp']}?text=${encodeURIComponent(message)}`, '_blank');
                     } else {
-                        showMessage(messageBoxCreator, `Error: ${result.error}`, 'red');
+                        showMessage(messageBoxCreator, 'Failed to save or share invoice. Please check console.', 'red');
                     }
                 });
 
-                generatePdfBtn.addEventListener('click', () => {
-                    const customerName = customerNameInput.value;
-                    const workTitle = workTitleInput.value;
-                    const estimateNumber = estimateNumberInput.value;
-                    const date = dateInput.value;
-                    const customerWhatsapp = customerWhatsappInput.value;
-                    const subtotal = parseFloat(subtotalEl.textContent.replace('₹ ', ''));
-                    const discount = parseFloat(discountAmountInput.value) || 0;
-                    const grandTotal = parseFloat(grandTotalEl.textContent.replace('₹ ', ''));
-                    const items = [];
-                    document.querySelectorAll('.item-row').forEach(row => {
-                        items.push({
-                            name: row.querySelector('.item-name').value,
-                            description: row.querySelector('.item-description').value,
-                            quantity: parseFloat(row.querySelector('.item-quantity').value),
-                            unit: row.querySelector('.item-unit').value,
-                            rate: parseFloat(row.querySelector('.item-rate').value),
-                            total: parseFloat(row.querySelector('.item-total').value)
-                        });
-                    });
-
-                    if (!customerName || !workTitle || !estimateNumber || !date) {
-                        showMessage(messageBoxCreator, 'Please fill out all required fields to generate PDF.', 'red');
+                // PDF generation logic - saves first
+                generatePdfBtn.addEventListener('click', async () => {
+                    if (!form.checkValidity()) {
+                        form.reportValidity();
                         return;
                     }
+                    const dataToSave = getFormData();
+                    const result = await postDataToGoogleSheet({ action: 'save', data: dataToSave });
 
-                    const formData = {
-                        customerName,
-                        customerWhatsapp,
-                        workTitle,
-                        estimateNumber,
-                        date,
-                        items: JSON.stringify(items),
-                        subtotal,
-                        discount,
-                        grandTotal,
-                        status: 'Pending'
-                    };
-                    generatePDF(formData);
+                    if (result.status === 'success') {
+                        showMessage(messageBoxCreator, 'Invoice saved. Generating PDF...', 'green');
+                        // Use the data just saved for PDF generation
+                        generatePDF(dataToSave);
+                    } else {
+                        showMessage(messageBoxCreator, 'Failed to save or generate PDF. Please check console.', 'red');
+                    }
                 });
-                
-                newEstimateBtn.addEventListener('click', resetForm);
 
-                loadSelectedBtn.addEventListener('click', async () => {
-                    const estimateNumber = savedEstimatesDropdown.value;
-                    if (estimateNumber) {
-                        const selectedEstimate = loadedEstimates.find(e => e['Estimate Number'] === estimateNumber);
-                        if (selectedEstimate) {
-                            // The Google script returns a flat object, so we need to structure it.
-                            const formattedData = {
-                                'Customer Name': selectedEstimate['Customer Name'],
-                                'Customer Whatsapp': selectedEstimate['Customer Whatsapp'],
-                                'Work Title': selectedEstimate['Work Title'],
-                                'Estimate Number': selectedEstimate['Estimate Number'],
-                                'Date': selectedEstimate['Date'],
-                                'Your WhatsApp Number': selectedEstimate['Your WhatsApp Number'],
-                                'Items': selectedEstimate['Items'],
-                                'Subtotal': selectedEstimate['Subtotal'],
-                                'Discount': selectedEstimate['Discount'],
-                                'Grand Total': selectedEstimate['Grand Total'],
-                                'Status': selectedEstimate['Status']
-                            };
-                            populateForm(formattedData);
-                            showMessage(messageBoxCreator, `Estimate ${estimateNumber} loaded successfully.`, 'green');
+                // Load existing invoice
+                loadSelectedBtn.addEventListener('click', () => {
+                    const invoiceNumber = savedInvoicesDropdown.value; // Changed ID
+                    if (invoiceNumber) {
+                        const invoice = loadedInvoices.find(e => e['Invoice Number'] === invoiceNumber); // Changed key
+                        if (invoice) {
+                            loadInvoice(invoice);
+                            showMessage(messageBoxCreator, `Invoice ${invoiceNumber} loaded successfully.`, 'green');
                         }
                     } else {
-                        showMessage(messageBoxCreator, 'Please select an estimate to load.', 'red');
+                        showMessage(messageBoxCreator, 'Please select an invoice to load.', 'red');
                     }
                 });
 
+                // Delete existing invoice
                 deleteSelectedBtn.addEventListener('click', async () => {
-                    const estimateNumber = savedEstimatesDropdown.value;
-                    if (estimateNumber) {
-                        if (confirm(`Are you sure you want to delete estimate ${estimateNumber}? This action cannot be undone.`)) {
-                            const result = await deleteEstimateFromSheet(estimateNumber);
+                    const invoiceNumber = savedInvoicesDropdown.value; // Changed ID
+                    if (invoiceNumber) {
+                        if (confirm(`Are you sure you want to delete invoice ${invoiceNumber}? This action cannot be undone.`)) {
+                            const result = await deleteInvoiceFromSheet(invoiceNumber); // Changed function name
                             if (result.status === 'success') {
-                                showMessage(messageBoxCreator, `Estimate ${estimateNumber} deleted successfully.`, 'green');
+                                showMessage(messageBoxCreator, `Invoice ${invoiceNumber} deleted successfully.`, 'green');
                                 resetForm();
-                                loadEstimatesToDropdown();
+                                loadInvoicesToDropdown();
                             } else {
-                                showMessage(messageBoxCreator, `Failed to delete estimate: ${result.error}`, 'red');
+                                showMessage(messageBoxCreator, `Failed to delete invoice: ${result.error}`, 'red');
                             }
                         }
                     } else {
-                        showMessage(messageBoxCreator, 'Please select an estimate to delete.', 'red');
+                        showMessage(messageBoxCreator, 'Please select an invoice to delete.', 'red');
                     }
                 });
 
                 // Initial setup
                 resetForm();
-                loadEstimatesToDropdown();
+                loadInvoicesToDropdown();
             }
         });
     </script>
