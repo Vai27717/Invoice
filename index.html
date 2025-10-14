@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice</title>
+    <title>Estimate</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
     <script>
@@ -49,14 +49,14 @@
 </head>
 <body class="p-4 bg-gray-100 flex items-center justify-center min-h-screen">
     <div class="container-fluid bg-white p-6 rounded-xl shadow-lg w-full md:max-w-lg">
-        <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">Invoice</h1>
+        <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">Estimate</h1>
         
         <div id="loading-screen" class="fixed inset-0 bg-white bg-opacity-75 flex items-center justify-center hidden z-50">
             <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
         </div>
         
         <div id="creator-view">
-            <form id="invoice-form" class="space-y-4">
+            <form id="estimate-form" class="space-y-4">
                 <div class="bg-gray-50 p-4 rounded-lg">
                     <h2 class="text-xl font-semibold mb-3 text-gray-700">Customer Information</h2>
                     <div class="space-y-2">
@@ -78,8 +78,8 @@
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label for="invoice-number" class="block text-sm font-medium text-gray-700">Invoice Number</label>
-                                <input type="text" id="invoice-number" name="invoice-number" class="mt-1 block w-full p-2.5" placeholder="e.g., INV-001" readonly required>
+                                <label for="estimate-number" class="block text-sm font-medium text-gray-700">Estimate Number</label>
+                                <input type="text" id="estimate-number" name="estimate-number" class="mt-1 block w-full p-2.5" placeholder="e.g., EST-001" readonly required>
                             </div>
                             <div>
                                 <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
@@ -101,7 +101,6 @@
                     <h2 class="text-xl font-semibold mb-3 text-gray-700">Item List</h2>
                     <div id="items-container" class="space-y-4">
                         </div>
-                    
                     <button type="button" id="add-item-btn" class="mt-4 w-full bg-blue-500 text-white p-3 rounded-lg font-semibold hover:bg-blue-600 transition duration-200">
                         Add Item
                     </button>
@@ -112,24 +111,21 @@
                         <span>Subtotal</span>
                         <span id="subtotal">₹ 0.00</span>
                     </div>
-                    
                     <div class="flex justify-between font-semibold text-gray-700">
-                        <label for="advance-amount">Advance Amount (₹)</label>
-                        <input type="number" id="advance-amount" name="advance-amount" class="w-24 p-1 text-right" placeholder="0" min="0" value="0">
+                        <label for="discount-amount">Discount (%)</label>
+                        <input type="number" id="discount-amount" name="discount-amount" class="w-24 p-1 text-right" placeholder="0" min="0" value="0">
                     </div>
-          
                     <div class="flex justify-between font-bold text-lg text-gray-800 border-t pt-2">
                         <span>Grand Total</span>
                         <span id="grand-total">₹ 0.00</span>
                     </div>
-            
                     <div id="amount-in-words" class="text-sm italic text-gray-600"></div>
                 </div>
 
                 <div id="message-box-creator" class="hidden text-center text-sm p-3 rounded-lg font-medium"></div>
 
                 <div class="bg-gray-50 p-4 rounded-lg mt-4 space-y-3">
-                    <h2 class="text-xl font-semibold mb-3 text-gray-700">Share Invoice</h2>
+                    <h2 class="text-xl font-semibold mb-3 text-gray-700">Share Estimate</h2>
                     
                     <div>
                         <label for="creator-whatsapp" class="block text-sm font-medium text-gray-700">Your WhatsApp Number (for notifications)</label>
@@ -145,15 +141,15 @@
                         </button>
                     </div>
                 </div>
-                <button type="button" id="new-invoice-btn" class="mt-4 w-full bg-indigo-500 text-white p-3 rounded-lg font-semibold hover:bg-indigo-600 transition duration-200">
-                    New Invoice
+                <button type="button" id="new-estimate-btn" class="mt-4 w-full bg-indigo-500 text-white p-3 rounded-lg font-semibold hover:bg-indigo-600 transition duration-200">
+                    New Estimate
                 </button>
 
                 <div class="bg-gray-50 p-4 rounded-lg mt-4">
-                    <h2 class="text-xl font-semibold mb-3 text-gray-700">Saved Invoices</h2>
+                    <h2 class="text-xl font-semibold mb-3 text-gray-700">Saved Estimates</h2>
                     <div class="flex flex-wrap items-center space-x-2 space-y-2 md:space-y-0">
-                        <select id="saved-invoices-dropdown" class="flex-grow p-2.5 rounded-lg border-gray-300">
-                            <option value="">Select an Invoice</option>
+                        <select id="saved-estimates-dropdown" class="flex-grow p-2.5 rounded-lg border-gray-300">
+                            <option value="">Select an Estimate</option>
                         </select>
                         <button type="button" id="load-selected-btn" class="w-full md:w-auto p-2.5 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition duration-200">Load</button>
                         <button type="button" id="delete-selected-btn" class="w-full md:w-auto p-2.5 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600 transition duration-200">Delete</button>
@@ -177,8 +173,8 @@
                                 <span id="customer-name-display" class="block mt-1 p-2.5 text-lg"></span>
                             </div>
                             <div>
-                                <span class="block text-sm font-medium text-gray-700">Invoice Number:</span>
-                                <span id="invoice-number-display" class="block mt-1 p-2.5 text-lg"></span>
+                                <span class="block text-sm font-medium text-gray-700">Estimate Number:</span>
+                                <span id="estimate-number-display" class="block mt-1 p-2.5 text-lg"></span>
                             </div>
                             <div>
                                 <span class="block text-sm font-medium text-gray-700">Date:</span>
@@ -190,7 +186,7 @@
                     <div class="bg-gray-50 p-4 rounded-lg">
                         <h2 class="text-xl font-semibold mb-3 text-gray-700">Item List</h2>
                         <div id="items-container-display" class="space-y-4">
-                        </div>
+                            </div>
                     </div>
                 
                     <div class="bg-gray-50 p-4 rounded-lg space-y-2">
@@ -198,24 +194,38 @@
                             <span>Subtotal</span>
                             <span id="subtotal-display"></span>
                         </div>
-                        
                         <div class="flex justify-between font-semibold text-gray-700">
-                            <span>Advance</span>
-                            <span id="advance-display"></span>
+                            <span>Discount</span>
+                            <span id="discount-display"></span>
                         </div>
-            
                         <div class="flex justify-between font-bold text-lg text-gray-800 border-t pt-2">
                             <span>Grand Total</span>
                             <span id="grand-total-display"></span>
                         </div>
                         <div id="amount-in-words-display" class="text-sm italic text-gray-600"></div>
                     </div>
-                    
+                
+                    <div class="bg-gray-50 p-4 rounded-lg mt-4">
+                        <h2 class="text-xl font-semibold mb-3 text-gray-700">Terms & Conditions</h2>
+                        <ol class="list-decimal list-inside text-sm text-gray-700 space-y-1">
+                            <li>30% amount of advance estimate amount has to be paid first</li>
+                            <li>60% is to be paid as per the step of the work after the commencement of the work</li>
+                            <li>10% within 7 days of work completion.</li>
+                            <li>Additional work will be billed separately.</li>
+                            <li>Check when the work is completed - no disputes will be considered later.</li>
+                            <li>If payment is made by check, an additional charge of ₹350 will be charged if the check bounces.</li>
+                            <li>Any changes require separate payment.</li>
+                            <li>This estimate is valid for 7 days.</li>
+                        </ol>
                     </div>
+                </div>
 
                 <div id="message-box-customer" class="hidden text-center text-sm p-3 rounded-lg font-medium"></div>
 
-                <div class="mt-4 grid grid-cols-1 gap-4">
+                <div class="mt-4 grid grid-cols-2 gap-4">
+                    <button type="button" id="accept-btn" class="w-full bg-purple-500 text-white p-3 rounded-lg font-bold hover:bg-purple-600 transition duration-200">
+                        Accept Estimate
+                    </button>
                     <button type="button" id="download-pdf-btn" class="w-full bg-red-500 text-white p-3 rounded-lg font-bold hover:bg-red-600 transition duration-200">
                         Download PDF
                     </button>
@@ -236,8 +246,8 @@
             const messageBoxCustomer = document.getElementById('message-box-customer');
             const loadingScreen = document.getElementById('loading-screen');
 
-            // --- Google Scripts URL - REPLACED WITH NEW URL ---
-            const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbw9xa1AaPreaZtpG3JbO0mUKoCjQ2IWOiLOhc6rPNKMkL-tTC6m9CUDikhNZRYTMmWJ/exec';
+            // --- Google Scripts URL - Please replace with your new deployed URL ---
+            const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbzvNcf7sgWgIO5gsWw9MRYhXZIFLD1ct1Ha1ZPbhpH43UhS-XHCdt8pDecnhjJFV0uH/exec';
 
             function showLoading() {
                 loadingScreen.classList.remove('hidden');
@@ -247,7 +257,6 @@
                 loadingScreen.classList.add('hidden');
             }
             
-            // Renamed function to reflect Invoice
             const postDataToGoogleSheet = async (data) => {
                 showLoading();
                 const payload = new FormData();
@@ -268,18 +277,16 @@
                 } catch (error) {
                     hideLoading();
                     console.error('Error sending data to Google Sheets:', error);
-                    showMessage(messageBoxCreator, 'An error occurred while sending the invoice.', 'red');
+                    showMessage(messageBoxCreator, 'An error occurred while sending the estimate.', 'red');
                     return { status: 'error', error: error.message };
                 }
             };
 
-            // Renamed function to reflect Invoice
-            const getInvoiceFromSheet = async (action, invoiceNumber = null) => {
+            const getEstimateFromSheet = async (action, estimateNumber = null) => {
                 showLoading();
                 let url = `${googleScriptUrl}?action=${action}`;
-                // Changed parameter name to invoiceNumber for clarity
-                if (invoiceNumber) {
-                    url += `&invoiceNumber=${encodeURIComponent(invoiceNumber)}`;
+                if (estimateNumber) {
+                    url += `&estimateNumber=${encodeURIComponent(estimateNumber)}`;
                 }
                 try {
                     const response = await fetch(url);
@@ -298,12 +305,11 @@
                 }
             };
 
-            // Renamed function to reflect Invoice
-            const deleteInvoiceFromSheet = async (invoiceNumber) => {
+            const deleteEstimateFromSheet = async (estimateNumber) => {
                 showLoading();
                 const payload = new FormData();
                 payload.append('action', 'delete');
-                payload.append('invoiceNumber', invoiceNumber); // Changed parameter name
+                payload.append('estimateNumber', estimateNumber);
                 
                 try {
                     const response = await fetch(googleScriptUrl, {
@@ -319,10 +325,11 @@
                 } catch (error) {
                     hideLoading();
                     console.error('Error deleting data from Google Sheets:', error);
-                    showMessage(messageBoxCreator, 'An error occurred while deleting the invoice.', 'red');
+                    showMessage(messageBoxCreator, 'An error occurred while deleting the estimate.', 'red');
                     return { status: 'error', error: error.message };
                 }
             };
+
             // --- End Google Sheets Integration Setup ---
 
             // Function to display messages
@@ -342,16 +349,13 @@
             // Function to format the date to DD-MM-YYYY
             const formatDate = (dateString) => {
                 if (!dateString) return '';
-                // Date object madhun YYYY-MM-DD format madhe ghenar, tarihi DD-MM-YYYY madhe display honyasathi:
                 const date = new Date(dateString);
-                // Jar date invalid asel, tar return.
-                if (isNaN(date)) return dateString; 
-
                 const day = String(date.getDate()).padStart(2, '0');
                 const month = String(date.getMonth() + 1).padStart(2, '0');
                 const year = date.getFullYear();
-                return `${day}-${month}-${year}`; // Display in DD-MM-YYYY
+                return `${day}-${month}-${year}`;
             };
+
             const convertNumberToEnglishWords = (num) => {
                 const units = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
                 const teens = ['', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
@@ -382,12 +386,10 @@
                 return 'Rupees ' + words.trim() + ' Only';
             };
             
-           
-  // --- PDF Generation Function (Updated for Invoice) ---
-            
+           // --- PDF Generation Function ---
+            // --- PDF Generation Function (Final Invoice Version) ---
             const generatePDF = (data) => {
-                // data.Items vaparle ahe karāṇ getFormData() madhye 'Items' hā key vaparlā ahe
-                const items = JSON.parse(data.Items); 
+                const items = JSON.parse(data.items);
                 let itemsHtml = items.length > 0 ? items.map((item, index) => `
                     <tr>
                         <td style="border: 1px solid #ddd; padding: 8px; text-align: left;">${index + 1}</td>
@@ -399,10 +401,9 @@
                     </tr>
                 `).join('') : `<tr><td colspan="6" style="border: 1px solid #ddd; padding: 8px; text-align: center;">No items in this invoice.</td></tr>`;
                 
-                // data.Advance vaparle ahe
-                const advanceAmount = parseFloat(data.Advance) || 0; 
-                const advanceHtml = advanceAmount > 0 ? `
-                    <p style="margin: 5px 0; display: flex; justify-content: space-between; font-weight: 600; color: #cc0000;"><span>Less Advance:</span><span>₹ ${advanceAmount.toFixed(2)}</span></p>
+                // ✅ Discount chya jagi Advance (Less Advance)
+                const advanceHtml = parseFloat(data.advance) > 0 ? `
+                    <p style="margin: 5px 0; display: flex; justify-content: space-between; font-weight: 600; color: #cc0000;"><span>Less Advance:</span><span>₹ ${parseFloat(data.advance).toFixed(2)}</span></p>
                 ` : '';
                 
                 const pdfContent = `
@@ -419,13 +420,13 @@
                         <div style="display: flex; justify-content: space-between; margin-top: 10px;">
                             <div style="width: 50%;">
                                 <p style="margin: 0; font-weight: bold;">To,</p>
-                                <p style="margin: 5px 0;">Name: ${data['Customer Name']}</p>
-                                <p style="margin: 5px 0;">Contact: ${data['Customer Whatsapp']}</p>
-                                <p style="margin: 5px 0;">Work Title: ${data['Work Title']}</p>
+                                <p style="margin: 5px 0;">Name: ${data.customerName}</p>
+                                <p style="margin: 5px 0;">Contact: ${data.customerWhatsapp}</p>
+                                <p style="margin: 5px 0;">Work Title: ${data.workTitle}</p>
                             </div>
                             <div style="width: 40%; margin-left: auto; text-align: right; border: 1px solid #eee; padding: 10px;">
-                                <p style="margin: 0;"><strong>Invoice No.:</strong> ${data['Invoice Number']}</p> 
-                                <p style="margin: 5px 0;"><strong>Date:</strong> ${formatDate(data['Date'])}</p>
+                                <p style="margin: 0;"><strong>Invoice No.:</strong> ${data.invoiceNumber}</p> 
+                                <p style="margin: 5px 0;"><strong>Date:</strong> ${formatDate(data.date)}</p>
                                 </div>
                         </div>
                         <div style="margin-top: 20px;">
@@ -447,13 +448,12 @@
                         </div>
                         <div style="margin-top: 20px; display: flex; justify-content: flex-end;">
                             <div style="width: 40%;">
-                                <p style="margin: 0; display: flex; justify-content: space-between;"><span>Subtotal:</span><span>₹ ${parseFloat(data.Subtotal).toFixed(2)}</span></p>
-                                ${advanceHtml}
-                                <hr style="border: none; border-top: 1px solid #333; margin: 10px 0;">
-                                <p style="margin: 0; font-size: 18px; font-weight: bold; display: flex; justify-content: space-between;"><span>Grand Total:</span><span>₹ ${parseFloat(data['Grand Total']).toFixed(2)}</span></p>
+                                <p style="margin: 0; display: flex; justify-content: space-between;"><span>Subtotal:</span><span>₹ ${parseFloat(data.subtotal).toFixed(2)}</span></p>
+                                ${advanceHtml} <hr style="border: none; border-top: 1px solid #333; margin: 10px 0;">
+                                <p style="margin: 0; font-size: 18px; font-weight: bold; display: flex; justify-content: space-between;"><span>Grand Total:</span><span>₹ ${parseFloat(data.grandTotal).toFixed(2)}</span></p>
                             </div>
                         </div>
-                        <p style="margin-top: 10px; font-style: italic; text-align: right;">${convertNumberToEnglishWords(parseFloat(data['Grand Total']))}</p>
+                        <p style="margin-top: 10px; font-style: italic; text-align: right;">${convertNumberToEnglishWords(parseFloat(data.grandTotal))}</p>
                         
                         <div style="margin-top: 40px; display: flex; justify-content: flex-end; align-items: flex-end;">
                             <div style="text-align: right;">
@@ -469,27 +469,21 @@
                 `;
                 const options = {
                     margin: 10,
-                    filename: `Invoice_${data['Invoice Number']}.pdf`, 
+                    // ✅ Filename change
+                    filename: `Invoice_${data.invoiceNumber}.pdf`, 
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 2 },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
                 
-                // Final download fix for both Creator and Customer view
-                html2pdf().from(pdfContent).set(options).save()
-                    .then(() => {
-                        // Success ahe, download honar.
-                    })
-                    .catch(error => {
-                        console.error("PDF Download Failed:", error);
-                        // Jar error aala tar user la alert dya.
-                        alert("PDF download failed. Please check your browser's Pop-up Blocker or console for errors.");
-                    });
+                // ✅ PDF Download Fix (using try-catch for robustness)
+                try {
+                    html2pdf().from(pdfContent).set(options).save();
+                } catch (e) {
+                    console.error("PDF Generation Error:", e);
+                    alert("PDF generation failed. Check browser console for details.");
+                }
             };
-
-            // If the view is for the customer
-            if (isCustomerView) {
-                // ... (Baki code tya pramane ahe)
 
 
             // If the view is for the customer
