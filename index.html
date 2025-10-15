@@ -524,12 +524,17 @@ const summaryHtml = `
                                 document.getElementById('customer-name-display').textContent = invoiceData.customerName;
                                 document.getElementById('invoice-number-display').textContent = invoiceData.invoiceNumber; // Changed ID
                                 document.getElementById('date-display').textContent = formatDate(invoiceData.date);
-                                document.getElementById('subtotal-display').textContent = `₹ ${parseFloat(invoiceData.subtotal).toFixed(2)}`;
-                                document.getElementById('advance-display').textContent = `₹ ${parseFloat(invoiceData.advance).toFixed(2)}`; // Changed ID and display
-                                document.getElementById('grand-total-display').textContent = `₹ ${parseFloat(invoiceData.grandTotal).toFixed(2)}`;
-                                
-                                const grandTotalAmount = parseFloat(invoiceData.grandTotal) || 0;
-                                document.getElementById('amount-in-words-display').textContent = convertNumberToEnglishWords(grandTotalAmount);
+                                // ✅ Calculate Balance Due
+const subtotal = parseFloat(invoiceData.subtotal) || 0;
+const advance = parseFloat(invoiceData.advance) || 0;
+const balanceDue = subtotal - advance;
+
+// ✅ Update Customer View (On Screen)
+document.getElementById('subtotal-display').textContent = `₹ ${subtotal.toFixed(2)}`;
+document.getElementById('advance-display').textContent = `₹ ${advance.toFixed(2)}`;
+document.getElementById('grand-total-display').textContent = `₹ ${balanceDue.toFixed(2)}`;
+document.getElementById('amount-in-words-display').textContent = convertNumberToEnglishWords(balanceDue);
+
 
                                 const itemsContainerDisplay = document.getElementById('items-container-display');
                                 itemsContainerDisplay.innerHTML = '';
